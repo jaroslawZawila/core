@@ -7,9 +7,10 @@ object Main extends ZIOAppDefault {
   def run: ZIO[Environment with ZIOAppArgs with Scope, Any, Any] = Server
     .start(
       port = 8080,
-      http = GreetingApp() ++ DownloadApp() ++ CounterApp() //++ UserApp()
+      http = GreetingApp() ++ DownloadApp() ++ CounterApp() ++ UserApp()
     )
     .provide(
-      ZLayer.fromZIO(Ref.make(0))
+      ZLayer.fromZIO(Ref.make(0)),
+      PersistentUserRepo.layer
     )
 }
