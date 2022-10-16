@@ -47,7 +47,12 @@ dependencies {
 
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-//    implementation group: 'de.heikoseeberger', name: 'akka-http-circe_2.13', version: '1.39.2'
+    implementation group: 'de.heikoseeberger', name: 'akka-http-circe_2.13', version: '1.39.2'
+    implementation group: 'io.circe', name: 'circe-generic_2.13', version: '0.13.0'
+    implementation group: 'io.circe', name: 'circe-generic-extras_2.13', version: '0.13.0'
+    implementation group: 'io.scalaland', name: 'chimney-cats_2.13', version: '0.6.2'
+
+
 
 
 

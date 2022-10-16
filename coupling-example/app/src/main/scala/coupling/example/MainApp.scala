@@ -7,7 +7,8 @@ import scala.io.StdIn
 
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
-import akka.http.scaladsl.Http
+import akka.http.scaladsl._
+import akka.http.scaladsl.server.Directives._
 
 object MainApp extends App {
 
@@ -16,7 +17,9 @@ object MainApp extends App {
   implicit val executionContext = system.executionContext
 
   val bindingFuture =
-    Http().newServerAt("localhost", 8080).bind(CoupledRoute.route)
+    Http()
+      .newServerAt("localhost", 8080)
+      .bind(CoupledRoute.route ~ BetterRoute.route)
 
   println(
     s"Server now online. Please navigate to http://localhost:8080/hello\nPress RETURN to stop..."
