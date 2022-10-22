@@ -11,4 +11,4 @@ lazy val root = (project in file("."))
     libraryDependencies ++=
       core ++ scalaTest
   )
-mainClass in reStart := Some("zio.rest.Main")
+mainClass in reStart := Some("zio.kafka.Main")

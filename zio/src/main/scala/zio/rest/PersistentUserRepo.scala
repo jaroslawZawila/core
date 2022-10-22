@@ -2,14 +2,10 @@ package zio.rest
 
 import java.util.UUID
 
-import io.getquill.context.ZioJdbc.DataSourceLayer
 import io.getquill.{Escape, H2ZioJdbcContext}
 import io.getquill.jdbczio.Quill
-import io.getquill._
-import zio._
-import java.util.UUID
-
 import javax.sql.DataSource
+import zio._
 
 case class UserTable(uuid: UUID, name: String, age: Int)
 
