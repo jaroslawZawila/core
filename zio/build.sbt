@@ -10,7 +10,7 @@ enablePlugins(DockerPlugin)
 
 lazy val root = (project in file("."))
   .settings(
-    name := "core",
+    name := "zio-rest",
     libraryDependencies ++= core ++ scalaTest,
     mainClass in (Compile, run) := Some("zio.rest.Main")
   )

@@ -6,6 +6,8 @@ object Dependencies {
     "dev.zio" %% "zio" % "2.0.2",
     "dev.zio" %% "zio-json" % "0.3.0-RC11",
     "dev.zio" %% "zio-kafka" % "2.0.1",
+    "dev.zio" %% "zio-metrics" % "2.0.1",
+    "dev.zio" %% "zio-metrics-connectors" % "2.0.7",
     "io.d11" %% "zhttp" % "2.0.0-RC10",
     "io.getquill" %% "quill-zio" % "4.3.0",
     "io.getquill" %% "quill-jdbc-zio" % "4.3.0",
