@@ -1,0 +1,4 @@
+scrape_configs:
+  - job_name: "zio-app"
+    static_configs:
+      - targets: ['service:8080']
