@@ -1,0 +1,23 @@
+{
+  "name": "save-mood",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "esbuild *.ts --bundle --minify --sourcemap --platform=node --target=es2020 --outdir=dist",
+    "postbuild": "cd dist && zip -r index.zip *.js*",
+    "all": "npm-run-all --serial prebuild build postbuild"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/uuid": "^9.0.1",
+    "esbuild": "^0.17.18"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1363.0",
+    "uuid": "^9.0.0"
+  }
+}
