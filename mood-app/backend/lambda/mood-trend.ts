@@ -1,13 +1,8 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDB } from 'aws-sdk';
+import {MoodItem} from "./Model";
 
 const dynamoDb = new DynamoDB.DocumentClient();
-
-interface SaveMoodItem  {
-    id: string,
-    mood: string,
-    createdAt: string
-}
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     // @ts-ignore
@@ -23,7 +18,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
         try {
             const response = await dynamoDb.query(request).promise();
-            const items = response.Items?.map(r => r as SaveMoodItem)
+            const items = response.Items?.map(r => r as MoodItem)
 
             return {
                 statusCode: 200,

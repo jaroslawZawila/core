@@ -1,21 +1,11 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { DynamoDB } from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
+import { SaveMoodRequest } from 'mood-shared';
+import {MoodItem} from "./Model";
 
 
 const dynamoDb = new DynamoDB.DocumentClient();
-
-interface SaveMoodRequest   {
-    userId: string,
-    mood: string
-}
-
-interface SaveMoodItem  {
-    id: string,
-    userId: string,
-    mood: string,
-    createdAt: string
-}
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     // console.log(`Event: ${JSON.stringify(event, null, 2)}`);
@@ -28,7 +18,7 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
             createdAt: new Date().toISOString(),
             id: uuid,
             ...body
-        } as SaveMoodItem
+        } as MoodItem
         const request = {
             TableName: 'mood-table',
             Item: item,
