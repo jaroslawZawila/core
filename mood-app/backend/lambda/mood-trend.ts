@@ -1,6 +1,7 @@
 import {APIGatewayEvent, APIGatewayProxyResult, Context} from 'aws-lambda';
 import {DynamoDB} from 'aws-sdk';
 import {MoodItem, MoodLevel} from "./Model";
+import { TrendResponse } from 'mood-shared';
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
@@ -24,18 +25,20 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
         const response = await dynamoDb.query(request).promise();
         const items: Map<string, number> = new Map();
 
-        const r = response.Items?.map(r => r as MoodItem).map(i => {
+        response.Items?.map(r => r as MoodItem).map(i => {
             i.createdAt = i.createdAt.split('T')[0];
             return i
         }).reduce(reducer(response.Items?.length), items)
 
-        const response = Object.fromEntries(items.entries());
+        const apiResponse = {
+            id: userId,
+            dates: [...items.keys()],
+            values: [...items.values()]
+        } as TrendResponse;
 
         return {
             statusCode: 200,
-            body: JSON.stringify({
-                items: response
-            }),
+            body: JSON.stringify(apiResponse),
         };
     } catch (error) {
         console.error(error);
