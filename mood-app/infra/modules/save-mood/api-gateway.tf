@@ -4,13 +4,13 @@ resource "aws_api_gateway_rest_api" "save-mood-api" {
   endpoint_configuration {
     types = ["REGIONAL"]
   }
-
 }
 
+# Save mood api
 resource "aws_api_gateway_resource" "save-mood-proxy" {
   rest_api_id = "${aws_api_gateway_rest_api.save-mood-api.id}"
   parent_id   = "${aws_api_gateway_rest_api.save-mood-api.root_resource_id}"
-  path_part   = "save-mood"
+  path_part   = "mood"
 }
 
 resource "aws_api_gateway_method" "save-mood-method" {
@@ -28,12 +28,44 @@ resource "aws_api_gateway_integration" "save-mood-lambda-integration" {
 
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.print-input.invoke_arn}"
+  uri                     = "${aws_lambda_function.save-mood.invoke_arn}"
+}
+
+#Get trend api
+resource "aws_api_gateway_resource" "trend-proxy" {
+  rest_api_id = "${aws_api_gateway_rest_api.save-mood-api.id}"
+  parent_id   = "${aws_api_gateway_rest_api.save-mood-api.root_resource_id}"
+  path_part   = "trends"
+}
+
+resource "aws_api_gateway_resource" "get-trend-proxy" {
+  rest_api_id = "${aws_api_gateway_rest_api.save-mood-api.id}"
+  parent_id   = "${aws_api_gateway_resource.trend-proxy.id}"
+  path_part   = "{userId}"
+}
+
+resource "aws_api_gateway_method" "get-trend-method" {
+  rest_api_id   = "${aws_api_gateway_rest_api.save-mood-api.id}"
+  resource_id   = "${aws_api_gateway_resource.get-trend-proxy.id}"
+  http_method   = "GET"
+  authorization = "NONE"
+  api_key_required = false
+}
+
+resource "aws_api_gateway_integration" "get-trend-lambda-integration" {
+  rest_api_id = "${aws_api_gateway_rest_api.save-mood-api.id}"
+  resource_id = "${aws_api_gateway_method.get-trend-method.resource_id}"
+  http_method = "${aws_api_gateway_method.get-trend-method.http_method}"
+
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = "${aws_lambda_function.get-trend.invoke_arn}"
 }
 
 resource "aws_api_gateway_deployment" "save-mood-api-deployment" {
   depends_on = [
-    "aws_api_gateway_integration.save-mood-lambda-integration"
+    aws_api_gateway_integration.get-trend-lambda-integration,
+    aws_api_gateway_integration.save-mood-lambda-integration
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.save-mood-api.id}"
@@ -45,6 +77,7 @@ resource "aws_api_gateway_api_key" "save-mood-key" {
   value = "34fbebf08bf047faa8f44b6ea5e0fe9a"
 }
 
+#Cloud watch for api gateway
 resource "aws_api_gateway_account" "demo" {
   cloudwatch_role_arn = aws_iam_role.cloudwatch.arn
 }

@@ -14,5 +14,5 @@ provider "aws" {
 }
 
 module "save-mood" {
-  source = "modulesave-mood"
+  source = "./modules/save-mood"
 }
