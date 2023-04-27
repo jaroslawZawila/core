@@ -23,12 +23,20 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
 
     try {
         const response = await dynamoDb.query(request).promise();
-        const items: Map<string, number> = new Map();
+        const itemss: Map<string, number[]> = new Map();
 
         response.Items?.map(r => r as MoodItem).map(i => {
             i.createdAt = i.createdAt.split('T')[0];
             return i
-        }).reduce(reducer(response.Items?.length), items)
+        }).reduce(reducer, itemss)
+
+        const itemsss = Array.from(itemss.entries())
+            .map(([key, value]) => {
+                console.log('Key:' + key)
+                console.log('numbers: ' + JSON.stringify(value) )
+                return [key, ((value.reduce((a, b) => {return a + b}, 0)) / value.length).toFixed(1)]
+            });
+        const items = new Map(itemsss);
 
         const apiResponse = {
             id: userId,
@@ -52,17 +60,14 @@ export const handler = async (event: APIGatewayEvent, context: Context): Promise
     }
 };
 
-const reducer = (l: number) =>  (acc: Map<string, number>, moodItem: MoodItem, index: number) => {
+//TODO: Re-do this
+const reducer = (acc: Map<string, number[]>, moodItem: MoodItem) => {
     const key = moodItem.createdAt;
     if (!acc.get(key)) {
-        acc.set(key, moodToNumber(moodItem.mood))
-    } else {
-        acc.set(key, moodToNumber(moodItem.mood) + acc.get(key))
+        acc.set(key, [])
     }
-    if(index + 1 == l) {
-        // @ts-ignore
-        acc.set(key, (acc.get(key) / (index + 1)).toFixed(1))
-    }
+
+    acc.set(key, [ moodToNumber(moodItem.mood), ...acc.get(key)])
 
     return acc;
 }
