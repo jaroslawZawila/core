@@ -16,7 +16,7 @@ export {
 
 export const unstable_settings = {
     // Ensure that reloading on `/modal` keeps a back button present.
-    initialRouteName: 'mood',
+    initialRouteName: '(mood)/moodPanel',
 };
 
 export default function RootLayout() {
@@ -50,7 +50,7 @@ function RootLayoutNav() {
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <Tabs>
                  <Tabs.Screen name="[...missing]" options={{ href: null }} />
-                 <Tabs.Screen name="(mood)/index" options={{ title: "My Mood" }} />
+                 <Tabs.Screen name="(mood)/moodPanel" options={{ title: "My Mood" }} />
                  <Tabs.Screen name="(trend)/index" options={{ title: "Trend" }} />
                 </Tabs>
             </ThemeProvider>

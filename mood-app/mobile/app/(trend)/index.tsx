@@ -1,22 +1,38 @@
 import {Dimensions, StyleSheet} from 'react-native';
-
+import React, {useState, useEffect} from 'react'
 import {Text, View} from '../../components/Themed';
 import {LineChart} from "react-native-chart-kit";
 import {TrendService} from "../../services/TrendService";
+import {TrendResponse} from "mood-shared";
+import {useNavigation} from "@react-navigation/native";
 
 export default function Index() {
 
-    const data = TrendService.getLastWeekTrend('');
+    const [state, setState] = useState<TrendResponse>(null);
+    const navigation = useNavigation();
+
+    async function fetchData() {
+        const response = await TrendService.getLastWeekTrend('future-id');
+        console.log("Trend response: " + JSON.stringify(response))
+        setState(response);
+    }
+
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', fetchData);
+        return unsubscribe;
+    }, [navigation]);
 
     return (
         <View>
             <Text style={styles.title}>Mood over last week:</Text>
-            <LineChart
+            <Text>{state && JSON.stringify(state)}</Text>
+            { !state && <Text>Loading data ....</Text>}
+            { state && <LineChart
                 data={{
-                    labels: data.dates,
+                    labels: state.dates,
                     datasets: [
                         {
-                            data: data.values
+                            data: state.values
                         }
                     ]
                 }}
@@ -44,7 +60,7 @@ export default function Index() {
                     marginVertical: 8,
                     borderRadius: 16
                 }}
-            />
+            />}
         </View>
     );
 }
