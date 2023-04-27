@@ -1,14 +1,25 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import {Text, View} from '../../components/Themed';
 import {useNavigation} from "@react-navigation/native";
 import {RestService} from "../../services/RestService";
-import {MoodLevel} from 'mood-shared';
+import * as Notifications from 'expo-notifications';
+import {Config} from "../../services/Config";
+// import {MoodLevel} from "mood-shared";
 
-export default function MoodPanel() {
+export enum MoodLevel {
+    Depressed = "Depressed",
+    Down = "Down",
+    Normal = "Normal",
+    Up = "Up",
+    Excited = "Excited"
+}
+
+export default function Index() {
 
     const [pressed, setPressed] = useState<boolean>(false);
+    const [appId, setAppId] = useState<string>('');
 
     const navigation = useNavigation();
 
@@ -16,15 +27,23 @@ export default function MoodPanel() {
         const unsubscribe = navigation.addListener('focus', () => {setPressed(false)});
         return unsubscribe;
     }, [navigation]);
+
+    useEffect( () => {
+        Config.getId().then((appId) => {
+            setAppId(appId);
+        })
+    }, []);
+
+
     async function save(mood: MoodLevel) {
         const date = new Date(Date.now());
         setPressed(true);
         RestService.saveMood({
-            userId: 'future-id',
+            userId: appId,
             mood: mood,
             createdAt: date.toISOString()
         }).then(() => {
-            navigation.navigate("(trend)/index");
+            navigation.navigate("(trend)/trendPanel");
         });
     }
 

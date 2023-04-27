@@ -1,13 +1,11 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import {DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider} from '@react-navigation/native';
+import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
 import {useFonts} from 'expo-font';
-import {SplashScreen, Stack, Tabs} from 'expo-router';
+import {SplashScreen, Tabs} from 'expo-router';
 import React, {useEffect} from 'react';
 import {useColorScheme} from 'react-native';
-import Index from "./(mood)/mood-panel";
-import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
 import {Login} from "../components/Login";
+import {Text} from '../components/Themed';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -20,6 +18,7 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
+
     const [loaded, error] = useFonts({
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
         ...FontAwesome.font,
@@ -29,7 +28,10 @@ export default function RootLayout() {
 
     // Expo Router uses Error Boundaries to catch errors in the navigation tree.
     useEffect(() => {
-        if (error) throw error;
+        if (error) {
+            console.log("Nav: " + JSON.stringify(error))
+            throw error;
+        }
     }, [error]);
 
     return (
@@ -48,10 +50,13 @@ function RootLayoutNav() {
     return (
         <>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-                <Tabs>
-                 <Tabs.Screen name="[...missing]" options={{ href: null }} />
-                 <Tabs.Screen name="(mood)/moodPanel" options={{ title: "My Mood" }} />
-                 <Tabs.Screen name="(trend)/index" options={{ title: "Trend" }} />
+                <Tabs initialRouteName={"(mood)/moodPanel"} screenOptions={{
+                    headerShown: false,
+                }}>
+                    <Tabs.Screen name="[...missing]" options={{href: null}}/>
+                    <Tabs.Screen name="(mood)/index" options={{title: "My Mood", tabBarIcon: () => <Text>🐱</Text>}}/>
+                    <Tabs.Screen name="(trend)/trendPanel"
+                                 options={{title: "Trend", tabBarIcon: () => <Text>🐶</Text>}}/>
                 </Tabs>
             </ThemeProvider>
         </>
